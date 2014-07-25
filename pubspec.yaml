@@ -1,0 +1,14 @@
+name: stompdart
+version: 0.0.1
+author: Michael Krog <mic@apaq.dk>
+description: |-
+  A Stomp implementation for Dart heavily inspired by StompJS.
+
+  It offers an interface for Adapting the socket technology in use so that it can easily be made to use any socket technology incl. WebSocket, SockJS, TCP Socket etc.
+homepage: https://github.com/Apaq/StompDart
+environment:
+  sdk: 1.5.3
+dependencies:
+  logging: '>=0.9.1+2 <0.10.0'
+dev_dependencies:
+  unittest: '>=0.11.0+3 <0.12.0'
