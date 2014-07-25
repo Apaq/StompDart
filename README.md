@@ -16,8 +16,23 @@ abstract class SocketAdapter {
   Stream<OpenEvent> get onOpen;
 }
 ```
-
 Any extension of the SocketAdapter class is usable by StompDart.
+
+Usage
+-------------
+```
+SocketAdapter socket = ...; <- Any SocketAdapter implementation
+Client client = new Client(socket);
+client.connect().then((Frame frame) {
+  StreamSubscription subscription = client.subscribe("/query/events").listen((Frame frame) {
+    // frame has frame.command, frame.body and frame.headers
+  });
+  
+  ...
+  //Later on we may wanna cancel the subscription.
+  subscription.cancel();
+});
+```
 
 Example Implementation for WebSocket
 -------------------
