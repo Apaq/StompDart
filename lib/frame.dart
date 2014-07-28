@@ -81,7 +81,7 @@ class Frame {
   static List<Frame> unmarshall(String datas) {
     /**
      * Ugly list comprehension to split and unmarshall *multiple STOMP frames*
-     * contained in a *single WebSocket frame*.
+     * contained in a *single Socket frame*.
      * The data are splitted when a NULL byte (follwode by zero or many LF bytes) is found
      **/
     List<Frame> frames = [];

@@ -7,8 +7,9 @@ description: |-
   It offers an interface for Adapting the socket technology in use so that it can easily be made to use any socket technology incl. WebSocket, SockJS, TCP Socket etc.
 homepage: https://github.com/Apaq/StompDart
 environment:
-  sdk: 1.5.3
+  sdk: '>=1.5.0'
 dependencies:
   logging: '>=0.9.1+2 <0.10.0'
+  sockjs_client: any
 dev_dependencies:
   unittest: '>=0.11.0+3 <0.12.0'

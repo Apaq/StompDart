@@ -7,7 +7,7 @@ class MockSocketAdapter extends SocketAdapter {
 
   StreamController<DataEvent> _messageStream = new StreamController();
   Completer<CloseEvent> closeFuture;
-  Future<OpenEvent> openFuture = new Future.delayed(new Duration(seconds: 2));
+  Future<OpenEvent> openFuture = new Future.delayed(new Duration(milliseconds: 30));
   
   MockSocketAdapter() {
     this.closeFuture = new Completer();

@@ -68,8 +68,7 @@ class Client {
   void _transmit(String command, Map headers, [String body=""]) {
     String out = Frame.marshall(command, headers, body);
     this.log.fine(">>>$out");
-    // if necessary, split the *STOMP* frame to send it on many smaller
-    // *WebSocket* frames
+    // if necessary, split the *STOMP* frame to send it on many smaller *Socket* frames
     while (true) {
       if (out.length > MAX_FRAME_SIZE) {
         this._socketAdapter.send(out.substring(0, MAX_FRAME_SIZE));
@@ -83,7 +82,7 @@ class Client {
 
   //Heart-beat negotiation
   void _setupHeartbeat(headers) {
-    if (!["Stomp.VERSIONS.V1_1", "Stomp.VERSIONS.V1_2"].contains(headers["version"])) {
+    if (!["1.1", "1.2"].contains(headers["version"])) {
       return;
     }
 
