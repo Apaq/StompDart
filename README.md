@@ -34,75 +34,31 @@ client.connect().then((Frame frame) {
 });
 ```
 
-Example Implementation for WebSocket
+Example for WebSocket
 -------------------
 ```
-class WebSocketAdapter extends SocketAdapter {
-  WebSocket ws;
-  WebSocketAdapter(this.ws) {
-    ws.binaryType = "arraybuffer";
-  }
-  
-  void send(data) => this.ws.send(data);
-  void close() => this.ws.close();
-  
-  Stream<DataEvent> get onMessage {
-    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (MessageEvent value, EventSink<DataEvent> sink) {
-      sink.add(new DataEvent(value.data));
-    });
-    return this.ws.onMessage.transform(transformer);
-  }
-  
-  Stream<CloseEvent> get onClose {
-    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (CloseEvent value, EventSink<CloseEvent> sink) {
-      sink.add(new CloseEvent(value.reason));
-    });
-    return this.ws.onClose.transform(transformer);
-  }
-  
-  Stream<OpenEvent> get onOpen {
-    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (Event value, EventSink<OpenEvent> sink) {
-      sink.add(new OpenEvent());
-    });
-    return this.ws.onOpen.transform(transformer);
-  }
-  
-}
+import 'package:stompdart/stomp.dart' as Stomp;
+import 'package:stompdart/websocketadapter.dart' as StompAdapter;
+imprt 'dart:html'
+
+WebSocket ws = new WebSocket('ws://server');
+StompAdapter.WebSocketAdapter adapter = new StompAdapter.WebSocketAdapter(ws);
+Stomp.Client client = new Stomp.Client(adapter);
+.....
 ```
 
 Example Implementation for SockJS
+-------------------
 ```
-class SockJSAdapter extends Stomp.SocketAdapter {
-  SockJS.Client _client;
-  SockJSAdapter(this._client);
-  
-  void send(data) {
-    this._client.send(data);  
-  }
-  
-  void close() {
-    
-  }
-  
-  Stream<Stomp.DataEvent> get onMessage {
-    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (SockJS.MessageEvent value, EventSink<Stomp.DataEvent> sink) {
-      sink.add(new Stomp.DataEvent(value.data));
-    });
-    return this._client.onMessage.transform(transformer);
-  }
-  Stream<Stomp.CloseEvent> get onClose {
-    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (SockJS.CloseEvent value, EventSink<Stomp.CloseEvent> sink) {
-      sink.add(new Stomp.CloseEvent(value.reason));
-    });
-    return this._client.onClose.transform(transformer);
-  }
-  Stream<Stomp.OpenEvent> get onOpen {
-    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (var value, EventSink<Stomp.OpenEvent> sink) {
-      sink.add(new Stomp.OpenEvent());
-    });
-    return this._client.onOpen.transform(transformer);
-  }
-}
+import 'package:stompdart/stomp.dart' as Stomp;
+import 'package:stompdart/sockjsadapter.dart' as StompAdapter;
+import 'package:sockjs_client/sockjs_client.dart' as SockJS;
+
+SockJS.Client sockjs = new SockJS.Client('ws://server);
+StompAdapter.WebSocketAdapter adapter = new StompAdapter.WebSocketAdapter(sockjs);
+Stomp.Client client = new Stomp.Client(adapter);
+...
+```
 ```
 
 
