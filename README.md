@@ -39,7 +39,7 @@ Example for WebSocket
 ```
 import 'package:stompdart/stomp.dart' as Stomp;
 import 'package:stompdart/websocketadapter.dart' as StompAdapter;
-imprt 'dart:html'
+import 'dart:html'
 
 WebSocket ws = new WebSocket('ws://server');
 StompAdapter.WebSocketAdapter adapter = new StompAdapter.WebSocketAdapter(ws);
