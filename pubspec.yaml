@@ -10,6 +10,6 @@ environment:
   sdk: '>=1.5.0'
 dependencies:
   logging: '>=0.9.1+2 <0.10.0'
-  sockjs_client: any
+  sockjs_client: '>=0.2.0 <0.3.0'
 dev_dependencies:
   unittest: '>=0.11.0+3 <0.12.0'
