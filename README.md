@@ -47,7 +47,7 @@ Stomp.Client client = new Stomp.Client(adapter);
 .....
 ```
 
-Example Implementation for SockJS
+Example for SockJS
 -------------------
 ```
 import 'package:stompdart/stomp.dart' as Stomp;
@@ -58,7 +58,6 @@ SockJS.Client sockjs = new SockJS.Client('ws://server);
 StompAdapter.WebSocketAdapter adapter = new StompAdapter.WebSocketAdapter(sockjs);
 Stomp.Client client = new Stomp.Client(adapter);
 ...
-```
 ```
 
 
