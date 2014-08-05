@@ -1,3 +1,5 @@
+library stompdart.frame;
+
 import 'dart:convert';
 
 const String STOMP_EOF = '\x00';
