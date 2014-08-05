@@ -8,7 +8,20 @@ class Frame {
   final String body;
   
 
-  Frame(this.command, this.headers, [this.body=""]);
+  Frame(this.command, this.headers, this.body) {
+
+    if(this.headers == null) {
+      throw new ArgumentError("command must not be null");
+    }
+    
+    if(this.headers == null) {
+      throw new ArgumentError("headers must not be null");
+    }
+    
+    if(this.body == null) {
+        throw new ArgumentError("body must not be null");
+      }
+  }
 
 
   String toString() {
@@ -96,7 +109,10 @@ class Frame {
     return frames;
   }
 
-  static String marshall(String command, Map headers, [String body=""]) {
+  static String marshall(String command, {Map headers, String body:""}) {
+    if(headers == null) {
+      headers = {};
+    }
     Frame frame = new Frame(command, headers, body);
     return "${frame.toString()}$STOMP_EOF";
   }

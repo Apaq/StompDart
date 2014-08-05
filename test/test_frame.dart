@@ -6,18 +6,18 @@ void main() {
     
     test('marshall a CONNECT frame', () =>
       expect("CONNECT\nlogin:john\npasscode:doe\n\n$STOMP_EOF", 
-        Frame.marshall("CONNECT", {"login":"john","passcode":"doe"}))
+        Frame.marshall("CONNECT", headers:{"login":"john","passcode":"doe"}))
       
     );
     
     test("marshall a SEND frame", () =>
       expect("SEND\ndestination:/queue/test\ncontent-length:13\n\nhello, world!$STOMP_EOF", 
-        Frame.marshall("SEND", {"destination":"/queue/test"}, "hello, world!"))
+        Frame.marshall("SEND", headers:{"destination":"/queue/test"}, body:"hello, world!"))
     );
 
     test("marshall a SEND frame without content-length", () =>
       expect("SEND\ndestination:/queue/test\n\nhello, world!$STOMP_EOF", 
-        Frame.marshall("SEND", {"destination":"/queue/test", "content-length": false}, "hello, world!"))
+        Frame.marshall("SEND", headers:{"destination":"/queue/test", "content-length": false}, body:"hello, world!"))
     );
     
     test("unmarshall a CONNECTED frame", () {
