@@ -9,18 +9,24 @@ class MockSocketAdapter extends SocketAdapter {
   Completer<CloseEvent> closeFuture;
   Future<OpenEvent> openFuture = new Future.delayed(new Duration(milliseconds: 30));
   String lastTransaction;
+  bool heartbeatRecieved = false;
   
   MockSocketAdapter() {
     this.closeFuture = new Completer();
   }
 
   void send(data) {
+    if(data == "\n") {
+      heartbeatRecieved = true;
+      return;
+    }
+    
     Frame frame = Frame.unmarshallSingle(data);
     
 
     switch (frame.command) {
       case "CONNECT":
-        this._messageStream.add(new DataEvent(Frame.marshall("CONNECTED")));
+        this._messageStream.add(new DataEvent(Frame.marshall("CONNECTED", headers: {"version": "1.1", "heart-beat": "1000, 1000"})));
         break;
       case "SUBSCRIBE":
         String id = frame.headers["id"];
@@ -119,6 +125,25 @@ void main() {
 
       }), completes);
     });
+
+    test('heartbeat is send', () {
+          MockSocketAdapter adapter = new MockSocketAdapter();
+          Client client = new Client(adapter);
+          client.heartbeatIncoming = 1000;
+          client.heartbeatOutgoing = 1000;
+          Future<Frame> future = client.connect();
+          expect(future.then((frame) {
+            
+            Future delay = new Future.delayed(new Duration(milliseconds: 1000));
+            delay.then((value) {
+              expect(true, adapter.heartbeatRecieved);
+            });
+            
+            
+            return Future.wait([delay]);
+
+          }), completes);
+        });
 
   });
 }

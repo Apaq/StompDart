@@ -59,8 +59,8 @@ class Client {
    * send heartbeat every 10s by default (value is in ms)
    * expect to receive server heartbeat at least every 10s by default (value in ms)
    **/
-  int _heartbeatOutgoing = 10000;
-  int _heartbeatIncoming = 10000;
+  int heartbeatOutgoing = 10000;
+  int heartbeatIncoming = 10000;
 
   Client(this._socketAdapter);
 
@@ -83,7 +83,7 @@ class Client {
 
   //Heart-beat negotiation
   void _setupHeartbeat(headers) {
-    if (!["1.1", "1.2"].contains(headers["version"])) {
+    if (!["1.1", "1.2"].contains(headers["version"]) || headers["heart-beat"] == null) {
       return;
     }
 
@@ -96,12 +96,10 @@ class Client {
     int serverOutgoing = int.parse(heartbeatInfo[0]),
         serverIncoming = int.parse(heartbeatInfo[1]);
 
-    if (this._heartbeatOutgoing != 0 && serverIncoming != 0) {
-      int ttl = math.max(this._heartbeatOutgoing, serverIncoming);
+    if (this.heartbeatOutgoing != 0 && serverIncoming != 0) {
+      int ttl = math.max(this.heartbeatOutgoing, serverIncoming);
       this._log.fine("send ping every ${ttl}ms");
 
-      // The `Stomp.setInterval` is a wrapper to handle regular callback
-      // that depends on the runtime environment (Web browser or node.js app)
       this._pinger = new Timer.periodic(new Duration(milliseconds: ttl), (Timer timer) {
         this._socketAdapter.send("\n");
         this._log.fine(">>> PING");
@@ -109,8 +107,8 @@ class Client {
 
     }
 
-    if (this._heartbeatIncoming != 0 && serverOutgoing != null) {
-      int ttl = math.max(this._heartbeatIncoming, serverOutgoing);
+    if (this.heartbeatIncoming != 0 && serverOutgoing != null) {
+      int ttl = math.max(this.heartbeatIncoming, serverOutgoing);
       this._log.fine("check pong every ${ttl}ms");
       this._ponger = new Timer.periodic(new Duration(milliseconds: ttl), (Timer timer) {
         Duration delta = this._serverActivity.difference(new DateTime.now());
@@ -234,7 +232,7 @@ class Client {
       this._log.fine("Socket Opened...");
       Map headers = {};
       headers["accept-version"] = "1.2,1.1,1.0";
-      headers["heart-beat"] = "${this._heartbeatOutgoing},${this._heartbeatIncoming}";
+      headers["heart-beat"] = "${this.heartbeatOutgoing},${this.heartbeatIncoming}";
       this._transmit("CONNECT", headers);
     });
 
