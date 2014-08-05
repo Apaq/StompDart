@@ -2,12 +2,20 @@ import 'dart:convert';
 
 const String STOMP_EOF = '\x00';
 
+/**
+ * Definition of a STOMP frame. 
+ * 
+ * All frames sent back and forth between the server and the client conforms to the structure defined by this class. 
+ */
 class Frame {
   final String command;
   final Map headers;
   final String body;
   
 
+  /**
+   * Creates a new instance of Frame. All arguments must be non-null.
+   */
   Frame(this.command, this.headers, this.body) {
 
     if(this.headers == null) {
@@ -24,6 +32,11 @@ class Frame {
   }
 
 
+  /**
+   * Converts the frame into a string suitable for sending over the wire. 
+   * 
+   * Remark: The returned string will not contain the EOF mark.
+   */
   String toString() {
     List lines = [this.command];
     bool skipContentLength = headers["content-length"] == false;
@@ -45,6 +58,9 @@ class Frame {
     return lines.join("\n");
   }
 
+  /**
+   * Unmarshals a String of data containing one STOMP frame.
+   */
   static Frame unmarshallSingle(String data) {
     /**
      * search for 2 consecutives LF byte to split the command
@@ -91,6 +107,9 @@ class Frame {
     return new Frame(command, headers, body);
   }
 
+  /**
+   * Unmarshals a list of Frames contained in a String of data.
+   */
   static List<Frame> unmarshall(String datas) {
     /**
      * Ugly list comprehension to split and unmarshall *multiple STOMP frames*
@@ -109,6 +128,9 @@ class Frame {
     return frames;
   }
 
+  /**
+   * Marshal a Frame into a String from command and optionally headers and body.
+   */
   static String marshall(String command, {Map headers, String body:""}) {
     if(headers == null) {
       headers = {};
