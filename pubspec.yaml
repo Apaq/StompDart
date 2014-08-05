@@ -1,5 +1,5 @@
 name: stompdart
-version: 0.0.3
+version: 0.1.0
 author: Michael Krog <mic@apaq.dk>
 description: |-
   A Stomp implementation for Dart heavily inspired by StompJS.

@@ -2,6 +2,20 @@ import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSin
 import 'stomp.dart' as Stomp;
 import 'package:sockjs_client/sockjs_client.dart' as SockJS;
 
+/**
+ * Adapter for using SockJS as transportlayer.
+ * 
+ * Example: 
+ * ```
+ * import 'package:stompdart/stomp.dart' as Stomp;
+ * import 'package:stompdart/sockjsadapter.dart' as StompAdapter;
+ * import 'package:sockjs_client/sockjs_client.dart' as SockJS;
+ * 
+ * SockJS.Client sockjs = new SockJS.Client('ws://server);
+ * StompAdapter.WebSocketAdapter adapter = new StompAdapter.WebSocketAdapter(sockjs);
+ * Stomp.Client client = new Stomp.Client(adapter);
+ * ```
+ */ 
 class SockJSAdapter extends Stomp.SocketAdapter {
   SockJS.Client _client;
   SockJSAdapter(this._client);
