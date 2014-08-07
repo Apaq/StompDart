@@ -1,3 +1,4 @@
+library stomdart.websocket;
 import 'dart:html' show WebSocket, MessageEvent, CloseEvent, Event;
 import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSink, Future;
 import 'stomp.dart' as Stomp;
@@ -22,6 +23,10 @@ class WebSocketAdapter extends Stomp.SocketAdapter {
     ws.binaryType = "arraybuffer";
   }
 
+  String getHost() {
+    return Uri.parse(this.ws.url).host;
+  }
+  
   void send(data) => this.ws.send(data);
   void close() {
     this.ws.close();

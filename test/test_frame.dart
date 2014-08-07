@@ -1,5 +1,5 @@
 import 'package:unittest/unittest.dart';
-import '../lib/frame.dart';
+import 'package:stompdart/stomp.dart';
 
 void main() {
   group("Frame Test", () {

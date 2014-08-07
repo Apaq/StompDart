@@ -1,10 +1,12 @@
 library stompdart;
+
 import 'dart:typed_data';
 import 'dart:math' as math;
 import 'dart:async' show Timer, Stream, StreamController, StreamSubscription, StreamTransformer, EventSink, Future, Completer;
-import 'frame.dart';
 import 'package:logging/logging.dart';
+import 'dart:convert';
 
+part 'frame.dart';
 
 /**
  * maximum *Socket* frame size sent by the client. If the STOMP frame
@@ -22,6 +24,7 @@ const int MAX_FRAME_SIZE = 16 * 1024;
 abstract class SocketAdapter {
   void send(data);
   void close();
+  String getHost();
   Stream<DataEvent> get onMessage;
   Stream<CloseEvent> get onClose;
   Stream<OpenEvent> get onOpen;
@@ -48,7 +51,7 @@ class Client {
   SocketAdapter _socketAdapter;
   Timer _pinger, _ponger;
   DateTime _serverActivity = new DateTime.now();
-
+  
   //used to index subscribers
   int _counter = 0;
   bool _connected = false;
@@ -136,7 +139,7 @@ class Client {
    * 
    * This method will return a Future which will complete when a connection has been established. 
    */
-  Future<Frame> connect({ String host, String login, String passcode, Map headers }) {
+  Future<Frame> connect({String host, String login, String passcode, Map headers }) {
     Completer<Frame> completer = new Completer();
     this._log.fine("Opening socket...");
     this._socketAdapter.onMessage.listen((DataEvent event) {
@@ -239,9 +242,11 @@ class Client {
       Map _headers = {};
       _headers["accept-version"] = "1.2,1.1,1.0";
       _headers["heart-beat"] = "${this.heartbeatOutgoing},${this.heartbeatIncoming}";
+      _headers["host"] = _socketAdapter.getHost();
       if (headers != null) _headers.addAll(headers);
-      if (login != null) 	_headers["login"] = login;
+      if (login != null) _headers["login"] = login;
       if (passcode != null) _headers["passcode"] = passcode;
+      if (host != null) _headers["host"] = host;
       this._transmit("CONNECT", _headers);
     });
 
@@ -253,15 +258,22 @@ class Client {
    **/
   void disconnect([Map headers]) {
     this._transmit("DISCONNECT", headers);
-    //Discard the onclose callback to avoid calling the errorCallback when
+    //Discard the closeSubscription to avoid calling the errorCallback when
     //the client is properly disconnected.
-    this._closeSubscription.cancel().then((value) {
-      this._socketAdapter.close();
-      this._cleanUp();
-    });
-
+    Future future = this._closeSubscription.cancel();
+    if(future == null) {
+      _doDisconnect();
+    } else {
+      future.then((value) => _doDisconnect());
+    }
+  
   }
 
+  void _doDisconnect() {
+    this._socketAdapter.close();
+    this._cleanUp();
+  }
+  
   /**
    * Clean up client resources when it is disconnected or the server did not
    * send heart beats in a timely fashion

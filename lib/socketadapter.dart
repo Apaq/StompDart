@@ -1,3 +1,4 @@
+library stomdart.socket;
 import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSink;
 import 'stomp.dart' as Stomp;
 import 'dart:io';
@@ -12,6 +13,10 @@ class SocketAdapter extends Stomp.SocketAdapter {
   
   SocketAdapter(this._client);
 
+  String getHost() {
+    return this._client.address.host;  
+  }
+  
   void send(String data) {
     this._client.write(data);  
   }

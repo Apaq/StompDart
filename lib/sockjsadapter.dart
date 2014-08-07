@@ -1,3 +1,4 @@
+library stomdart.sockjs;
 import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSink, Future;
 import 'stomp.dart' as Stomp;
 import 'package:sockjs_client/sockjs_client.dart' as SockJS;
@@ -18,8 +19,21 @@ import 'package:sockjs_client/sockjs_client.dart' as SockJS;
  */ 
 class SockJSAdapter extends Stomp.SocketAdapter {
   SockJS.Client _client;
-  SockJSAdapter(this._client);
+  
+  // SockJS does not expose the url or host. We accept the host here.
+  // Added a pull request for adding the url as a getter: https://github.com/nelsonsilva/sockjs-dart-client/pull/8
+  String _host;
+  SockJSAdapter(this._client, String host);
+  
+  SockJSAdapter.fromUrl(String url) {
+    this._host = Uri.parse(url).host;
+    this._client = new SockJS.Client(url); 
+  }
 
+  String getHost() {
+    return this._host;
+  }
+  
   void send(data) {
     this._client.send(data);  
   }
