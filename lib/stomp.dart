@@ -7,12 +7,18 @@ import 'package:logging/logging.dart';
 
 
 /**
- * maximum *WebSocket* frame size sent by the client. If the STOMP frame
+ * maximum *Socket* frame size sent by the client. If the STOMP frame
  * is bigger than this value, the STOMP frame will be sent using multiple
- * WebSocket frames (default is 16KiB)
+ * Socket frames (default is 16KiB)
  **/
 const int MAX_FRAME_SIZE = 16 * 1024;
 
+/**
+ * The adapter interface for the transport layer. The STOMP client only knows of this interface, not of the underlying transport technology. 
+ * This makes is possible to adapt different transport layers to be used by the STOMP client.
+ * 
+ * WebSocketAdapter and SockJSAdapter are examples of adapter transport layer to be used by the STOMP client but any implementation of this interface can be used by the STOMP client.
+ */ 
 abstract class SocketAdapter {
   void send(data);
   void close();
