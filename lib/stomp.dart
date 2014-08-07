@@ -130,7 +130,7 @@ class Client {
    * 
    * This method will return a Future which will complete when a connection has been established. 
    */
-  Future<Frame> connect([Map headers, String login, String passcode]) {
+  Future<Frame> connect({ String host, String login, String passcode, Map headers }) {
     Completer<Frame> completer = new Completer();
     this._log.fine("Opening socket...");
     this._socketAdapter.onMessage.listen((DataEvent event) {
@@ -230,10 +230,13 @@ class Client {
     });
     this._socketAdapter.onOpen.listen((OpenEvent event) {
       this._log.fine("Socket Opened...");
-      Map headers = {};
-      headers["accept-version"] = "1.2,1.1,1.0";
-      headers["heart-beat"] = "${this.heartbeatOutgoing},${this.heartbeatIncoming}";
-      this._transmit("CONNECT", headers);
+      Map _headers = {};
+      _headers["accept-version"] = "1.2,1.1,1.0";
+      _headers["heart-beat"] = "${this.heartbeatOutgoing},${this.heartbeatIncoming}";
+      if (headers != null) _headers.addAll(headers);
+      if (login != null) 	_headers["login"] = login;
+      if (passcode != null) _headers["passcode"] = passcode;
+      this._transmit("CONNECT", _headers);
     });
 
     return completer.future;
