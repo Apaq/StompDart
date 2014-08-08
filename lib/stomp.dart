@@ -56,12 +56,16 @@ class Client {
   int _counter = 0;
   bool _connected = false;
   StreamSubscription _closeSubscription;
-
+  
+  
 
   // subscription callbacks indexed by subscriber's ID
   Map<String, StreamController<Frame>> _subscriptions = {};
 
   StreamController<Frame> _receiptController = new StreamController();
+  StreamController<Frame> _errorController 	 = new StreamController();
+  //Server side ERROR frames
+  Stream<Frame> get onError => _errorController.stream;
 
   /**
    * Heartbeat properties of the client
@@ -220,8 +224,25 @@ class Client {
               this._receiptController.add(frame);
             }
             break;
+          /**
+           * The server MAY send ERROR frames if something goes wrong. The error frame SHOULD 
+           * contain a message header with a short description of the error, and the body MAY 
+           * contain more detailed information (or MAY be empty).
+           * If the frame included a receipt header, the ERROR frame SHOULD set the receipt-id 
+           * header to match the value of the receipt header of the frame which the error is 
+           * related to.
+           **/
           case "ERROR":
-            completer.completeError(frame);
+        	if ( ! completer.isCompleted ) {
+        		completer.completeError(frame);
+        	} else {
+        		if (frame.headers.containsKey('receipt-id') && this._receiptController.hasListener) {
+        			this._receiptController.add(frame);
+        		}
+        		if (this._errorController.hasListener) {
+                    this._errorController.add(frame);
+                }
+        	}
             break;
           default:
             this._log.fine("Unhandled frame: ${frame}");
