@@ -31,6 +31,9 @@ abstract class SocketAdapter {
   Stream<OpenEvent> get onOpen;
 }
 
+/**
+ * Defines the event of data recieved from the server.
+ */
 class DataEvent {
   var data;
 
@@ -38,15 +41,33 @@ class DataEvent {
 
 }
 
+/**
+ * Defines the event of connection with server has been closed
+ */
 class CloseEvent {
   String reason;
   CloseEvent(this.reason);
 }
 
+/**
+ * Defines the event of a new connection with the server has been opened.
+ */
 class OpenEvent {
 
 }
 
+/**
+ * The STOMP client. 
+ * This client accepts any underlying transportation technology as long as it implements the SocketAdapter interface.
+ * 
+ * USAGE:
+ *     SocketAdapter socket = ...; <- Any SocketAdapter implementation
+ *     Client client = new Client(socket);
+ *     client.connect().then((Frame frame) {
+ *     StreamSubscription subscription = client.subscribe("/query/events").listen((Frame frame) {
+ *        // frame has frame.command, frame.body and frame.headers
+ *     });
+ */
 class Client {
   final Logger _log = new Logger('Client');
   SocketAdapter _socketAdapter;
