@@ -1,3 +1,4 @@
+/// A SocketAdapter implementation for dart:io Socket's
 library stomdart.socket;
 import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSink;
 import 'stomp.dart' as Stomp;

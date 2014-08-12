@@ -1,3 +1,4 @@
+/// A Stomp implementation for Dart heavily inspired by StompJS.
 library stompdart;
 
 import 'dart:typed_data';

@@ -1,3 +1,4 @@
+/// A SocketAdapter implementation for SockJS.
 library stomdart.sockjs;
 import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSink, Future;
 import 'stomp.dart' as Stomp;

@@ -1,3 +1,4 @@
+/// A SocketAdapter implementation for Dart's WebSockets.
 library stomdart.websocket;
 import 'dart:html' show WebSocket, MessageEvent, CloseEvent, Event;
 import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSink, Future;
