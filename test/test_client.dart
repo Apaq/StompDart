@@ -41,7 +41,7 @@ class MockSocketAdapter extends SocketAdapter {
         if (destination == "/query/events") {
           this._messageStream.add(new DataEvent(Frame.marshall("MESSAGE", headers: {
             "subscription": id
-          })));
+          }, body: "Развивающий мультик для детей от 11 месяцев до 3 лет")));
         }
         break;
       case "SEND":
@@ -123,7 +123,7 @@ void main() {
         Future future = stream.elementAt(0);
         future.then((messageFrame) {
           expect("MESSAGE", messageFrame.command);
-
+          expect("Развивающий мультик для детей от 11 месяцев до 3 лет", messageFrame.body);
         });
         return Future.wait([future]);
 

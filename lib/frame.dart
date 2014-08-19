@@ -85,15 +85,15 @@ class Frame {
 
     /**
      * Parse body
-     * check for content-length or  topping at the first NULL byte found.
+     * check for content-length or stop at the first NULL byte found.
      **/
     String body = "";
     // skip the 2 LF bytes that divides the headers from the body
     int start = divider + 2;
-    if (headers.containsKey("content-length")) {
+    /*if (headers.containsKey("content-length")) {
       int len = int.parse(headers["content-length"]);
       body = data.substring(start, start + len);
-    } else {
+    } else {*/
       int chr = null;
       for (int i = start; i < data.length; i++) {
         chr = data.codeUnitAt(i);
@@ -102,7 +102,7 @@ class Frame {
         }
         body += new String.fromCharCode(chr);
       }
-    }
+    //}
 
     return new Frame(command, headers, body);
   }
