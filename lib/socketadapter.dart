@@ -4,6 +4,7 @@ import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSin
 import 'stomp.dart' as Stomp;
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
 
 /**
  * Adapter implementation for Dart Socket connections
@@ -27,10 +28,10 @@ class SocketAdapter extends Stomp.SocketAdapter {
   }
 
   Stream<Stomp.DataEvent> get onMessage {
-    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (List<int> value, EventSink<Stomp.DataEvent> sink) {
+    StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (String value, EventSink<Stomp.DataEvent> sink) {
       sink.add(new Stomp.DataEvent(value));
     });
-    return this._client.transform(transformer);
+    return this._client.transform(UTF8.decoder).transform(transformer);
   }
   
   Stream<Stomp.CloseEvent> get onClose {
