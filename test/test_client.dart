@@ -82,7 +82,6 @@ void main() {
       expect(future.then((frame) {
         expect("CONNECT", adapter.lastFrameRecieved.command);
         expect(adapter.getHost(), adapter.lastFrameRecieved.headers["host"]);
-
         expect("CONNECTED", frame.command);
       }), completes);
 
@@ -123,6 +122,7 @@ void main() {
         Future future = stream.elementAt(0);
         future.then((messageFrame) {
           expect("MESSAGE", messageFrame.command);
+          expect("92", messageFrame.headers['content-length']);
           expect("Развивающий мультик для детей от 11 месяцев до 3 лет", messageFrame.body);
         });
         return Future.wait([future]);

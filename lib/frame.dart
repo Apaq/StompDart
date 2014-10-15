@@ -90,10 +90,11 @@ class Frame {
     String body = "";
     // skip the 2 LF bytes that divides the headers from the body
     int start = divider + 2;
-    /*if (headers.containsKey("content-length")) {
+    if (headers.containsKey("content-length")) {
       int len = int.parse(headers["content-length"]);
-      body = data.substring(start, start + len);
-    } else {*/
+      List<int> dataArray = UTF8.encoder.convert(data.substring(start));
+      body = UTF8.decoder.convert(dataArray.sublist(0, len));
+    } else {
       int chr = null;
       for (int i = start; i < data.length; i++) {
         chr = data.codeUnitAt(i);
@@ -102,7 +103,7 @@ class Frame {
         }
         body += new String.fromCharCode(chr);
       }
-    //}
+    }
 
     return new Frame(command, headers, body);
   }

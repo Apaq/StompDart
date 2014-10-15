@@ -3,6 +3,8 @@ library stomdart.websocket;
 import 'dart:html' show WebSocket, MessageEvent, CloseEvent, Event;
 import 'dart:async' show Stream, StreamSubscription, StreamTransformer, EventSink, Future;
 import 'stomp.dart' as Stomp;
+import 'dart:typed_data';
+import 'package:logging/logging.dart';
 
 /**
  * Adapter for using Websocket as transport layer.
@@ -19,7 +21,9 @@ import 'stomp.dart' as Stomp;
  * ```
  */
 class WebSocketAdapter extends Stomp.SocketAdapter {
+  final Logger _log = new Logger('WebSocketAdapter');
   WebSocket ws;
+      
   WebSocketAdapter(this.ws) {
     ws.binaryType = "arraybuffer";
   }
@@ -35,7 +39,19 @@ class WebSocketAdapter extends Stomp.SocketAdapter {
 
   Stream<Stomp.DataEvent> get onMessage {
     StreamTransformer transformer = new StreamTransformer.fromHandlers(handleData: (MessageEvent value, EventSink<Stomp.DataEvent> sink) {
-      sink.add(new Stomp.DataEvent(value.data));
+      String data;
+      if (value.data is ByteBuffer) {
+        // the data is stored inside an ByteBuffer, we decode it to get the
+        // data as a String
+        Uint8List arr = new Uint8List.view(value.data);
+        this._log.fine("--- got data length: ${arr.length}");
+        //Return a string formed by all the char codes stored in the Uint8array
+        data = arr.join();
+      } else {
+        // take the data directly from the WebSocket `data` field
+        data = value.data;
+      }
+      sink.add(new Stomp.DataEvent(data));
     });
     return this.ws.onMessage.transform(transformer);
   }

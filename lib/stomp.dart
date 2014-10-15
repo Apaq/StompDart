@@ -1,7 +1,6 @@
 /// A Stomp implementation for Dart heavily inspired by StompJS.
 library stompdart;
 
-import 'dart:typed_data';
 import 'dart:math' as math;
 import 'dart:async' show Timer, Stream, StreamController, StreamSubscription, StreamTransformer, EventSink, Future, Completer;
 import 'package:logging/logging.dart';
@@ -35,7 +34,7 @@ abstract class SocketAdapter {
  * Defines the event of data recieved from the server.
  */
 class DataEvent {
-  var data;
+  String data;
 
   DataEvent(this.data);
 
@@ -169,22 +168,9 @@ class Client {
     Completer<Frame> completer = new Completer();
     this._log.fine("Opening socket...");
     this._socketAdapter.onMessage.listen((DataEvent event) {
-      String data;
+      String data = event.data;
 
-      if (event.data is ByteBuffer) {
-        // the data is stored inside an ByteBuffer, we decode it to get the
-        // data as a String
-        Uint8List arr = new Uint8List.view(event.data);
-        this._log.fine("--- got data length: ${arr.length}");
-        //Return a string formed by all the char codes stored in the Uint8array
-        data = arr.join();
-      } else {
-        // take the data directly from the WebSocket `data` field
-        data = event.data;
-      }
-
-
-      this._serverActivity = new DateTime.now();
+            this._serverActivity = new DateTime.now();
       if (data == "\n") { // heartbeat
         this._log.fine("<<< PONG");
         return;
@@ -217,14 +203,6 @@ class Client {
             StreamController<Frame> controller = this._subscriptions[subscription];
 
             if (controller != null && controller.hasListener) {
-              //client = this;
-              String messageID = frame.headers["message-id"];
-              // add `ack()` and `nack()` methods directly to the returned frame
-              // so that a simple call to `message.ack()` can acknowledge the message.
-              //frame.ack = (headers = {}) =>
-              //  client .ack messageID , subscription, headers
-              //frame.nack = (headers = {}) =>
-              //  client .nack messageID, subscription, headers
               controller.add(frame);
             } else {
               this._log.fine("Unhandled received MESSAGE: ${frame}");
